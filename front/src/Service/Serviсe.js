@@ -1,7 +1,8 @@
 import axios from 'axios';
 
 const localhost = axios.create({
-  baseURL: 'http://localhost:3000/',
+  withCredentials: true,
+  baseURL: 'http://localhost:5000/api/',
 });
 
 class Service {
@@ -10,6 +11,9 @@ class Service {
     this.baseURL = baseURL;
   }
 
+  async addNewCard(card) {
+    return await this.baseURL.post('/card', card);
+  }
 
 }
 

@@ -11,6 +11,7 @@ import * as Yup from 'yup';
 import { CustomTextField } from '../../Common/CustomTextField';
 import { CustomButton } from '../../Common/CustomButton';
 import { CustomSnackBar } from '../../Common/CustomSnackBar';
+import { localHostService } from "../../Service/Serviсe";
 
 const useStyles = makeStyles(() =>
   createStyles({
@@ -36,7 +37,9 @@ const useStyles = makeStyles(() =>
 export const RegistrationPage = () => {
   const classes = useStyles();
 
-  const [isOpen, setIsOpen] = useState(false);
+  const [isOpenError, setIsOpenError] = useState(false);
+
+  const [isOpenSuccess, setIsOpenSuccess] = useState(false);
 
   return (
     <div className={classes.root}>
@@ -49,9 +52,13 @@ export const RegistrationPage = () => {
         }}
         onSubmit={async (values) => {
           try {
-            console.log(values)
+            const res = await localHostService.addNewCard(values);
+            console.log(res)
+            if (res.status === 200) {
+              setIsOpenSuccess(!isOpenSuccess)
+            }
           } catch (e) {
-            console.log(e);
+            setIsOpenError(!isOpenError)
           }
         }}
         validationSchema={Yup.object().shape({
@@ -83,9 +90,14 @@ export const RegistrationPage = () => {
           return (
             <Form className='registration-page__wrapper'>
               <CustomSnackBar
-                setIsOpen={setIsOpen}
-                isOpen={isOpen}
-                messageText='аккаунт с введеным номер уже существует'
+                setIsOpen={setIsOpenError}
+                isOpen={isOpenError}
+                messageText='Перевод с данной карты уже зарегистрирован'
+              />
+              <CustomSnackBar
+                setIsOpen={setIsOpenSuccess}
+                isOpen={isOpenSuccess}
+                messageText='перевод успешно зарегестрирован'
               />
               <Typography
                 sx={{
